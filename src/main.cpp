@@ -41,8 +41,9 @@ auto expandTilde (std::string path_string) -> fs::path {
   return fs::path{path_string};
 }
 
+
 template <typename PointType>
-auto isOrganised (typename pcl::PointCloud<PointType>::Ptr const & cloud) {
+auto isOrganised (typename pcl::PointCloud <PointType>::Ptr const & cloud) {
   if (!cloud) {
     return INVALID_CLOUD;
   } else if (cloud->isOrganized ()) {
@@ -51,6 +52,7 @@ auto isOrganised (typename pcl::PointCloud<PointType>::Ptr const & cloud) {
     return UNORGANISED;
   }
 }
+
 
 template <typename PointType>
 auto loadCloud (fs::path const & filepath)
@@ -62,11 +64,12 @@ auto loadCloud (fs::path const & filepath)
     return nullptr;
 }
 
+
 auto outputResults (int result_code) {
   switch (result_code) {
     case INVALID_CLOUD:
-      std::cout << ERROR_OUTPUT;
-      break;
+      std::cout << ERROR_OUTPUT << std::endl;
+      return false;
     case ORGANISED:
       std::cout << ORGANISED_OUTPUT;
       break;
@@ -75,13 +78,15 @@ auto outputResults (int result_code) {
       break;
   }
   std::cout << std::endl;
+  return true;
 }
 
-auto main(int argc, char ** argv)
+
+auto main (int argc, char ** argv)
 -> int {
   auto const pcd_arg_index = pcl::console::parse_file_extension_argument (argc, argv, ".pcd");
 
-  if(pcd_arg_index.size () != 1) {
+  if (pcd_arg_index.size () != 1) {
     std::cout << "Please ensure one pcd file is specified." << std::endl;
     printHelp (argc, argv);
     return -1;
@@ -92,7 +97,12 @@ auto main(int argc, char ** argv)
   // TODO: Parse arg for different cloud types here
   auto cloud = loadCloud <pcl::PointXYZRGBA> (input_pcd_file);
   auto result = isOrganised <pcl::PointXYZRGBA> (cloud);
-  outputResults (result);
+  auto valid = outputResults (result);
+
+  if (!valid) {
+    printHelp (argc, argv);
+    return -1;
+  }
 
   return 0;
 }
