@@ -1,6 +1,6 @@
-# PCL Template Project
+# PCL Is Organised
 
-A brief description of the project.
+Tool to quickly check if a pcd file is organised.
 
 ## Installation
 
